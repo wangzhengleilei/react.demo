@@ -1,0 +1,56 @@
+jsx的注意事项（参考react官网DOM元素中）
+  1、标签闭合
+  2、最外层只有一个根元素
+  3、{/* 注释 */}
+  4、class  ==> className
+  5、style===>  style={{backgroundColor:'red'}}
+  6、onclick ===> onClick={this.handleClick}
+    1)handleClick如果要用到this的话，要写成箭头函数的形式
+    2)如果不写成箭头函数的形式，可以将其在constructor构造器中进行bind的this的绑定
+  7、from 表单里面的一些东西
+      例如input输入框的value用状态控制的话，需要配上onChange这个回调函数，写成受控组件的形式（input type=checkbox同理，默认值为defaultChecked）
+      如果input输入框只想给它赋默认值的话，可以采用defaultValue
+
+      label中for==>htmlFor(因为在js中for是关键字)
+
+
+
+
+react中组件通信
+  1)实现父子组件通信
+    父组件Todos调用子组件List的时候，给其传入list属性，List组件就可以通过this.prosp.list获取到传递过来的内容了。
+
+  2)实现子父组件通信
+    父组件可以将一个更改自身状态的方法通过属性的方式传递给子组件，然后子组件去触发
+
+  3)兄弟组件的通信 （https://www.jianshu.com/p/c4d3e194a699）
+    通过eventHub，主要功能是通过发布事件（eventHub.on）与订阅事件（eventHub.trigger）实现
+    eventHub就是一个唯一的公共对象，在这个公共对象里面提供了两个方法，一个方法是on可以用来发布事件，相当于一个组件可以提前绑定好监听事件以及事件的回调，在on方法里面写一些业务逻辑等待被触发
+    另一个方法是trigger方法用来订阅事件，在另一个组件里面就可以通过eventHub.trigger来去触发在on方法中绑定好的事件名，还可以给他穿第一个参数，这样就实现了相当于vue中event bus的效果
+
+
+
+
+Mock数据工具 （https://gitee.com/rh_hg/json-server?_from=gitee_search）
+    cnpm i json-server -g(全局安装json-server)
+    json-server --version(查看json-server版本)
+
+    首先需要进入到D:\work3\day22\22\06\src\mock 里面运行下述命令
+    json-server ./data.json --port 4000 -w
+
+
+代理配置
+ 1、通过CROS帮助我们解决跨域（Access-Control-Allow-Origin:["域名地址"]）
+ 2、前端需要通过正向代理进行配置
+    node_modules/react-scripts/config/webpackDevServer.config.json
+      proxy:{
+        "/api":{
+          target:"http://47.96.0.211:9000",
+          changeOrigin:true,
+          pathRewrite:{
+            "^/api":""
+          }
+        }
+      },
+      但是这样是有问题的！当我们再去安装别的插件的时候，yarn.lock文件会记录模块相关的改动，发现如果之前对于node_modules
+      里面的内容进行改动了，会重置
